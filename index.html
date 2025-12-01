@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FarmForce Now | Agricultural Piece Rate Payroll</title>
+  <title>FarmForce Later | Agricultural Piece Rate Payroll</title>
   <meta name="description" content="The only payroll system built specifically for agriculture. Piece rate calculations, minimum wage compliance, and tax withholding - all in one place.">
   
   <!-- Prevent search engine indexing -->
@@ -119,7 +119,7 @@
         </div>
         <div className="flex items-baseline gap-1">
           <span className="text-gray-800 font-bold text-2xl font-display">FarmForce</span>
-          <span className="text-gray-800 font-light italic text-2xl">Now</span>
+          <span className="text-gray-800 font-light italic text-2xl">Later</span>
         </div>
       </div>
     );
@@ -269,21 +269,11 @@
       return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
           <div className={`bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md ${isShaking ? 'animate-shake' : ''}`}>
-            <style>
-              {`
-                @keyframes shake {
-                  0%, 100% { transform: translateX(0); }
-                  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                  20%, 40%, 60%, 80% { transform: translateX(5px); }
-                }
-                .animate-shake { animation: shake 0.5s ease-in-out; }
-              `}
-            </style>
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
                 <Icon name="Lock" className="w-8 h-8 text-green-600" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 font-display">FarmForce Now</h1>
+              <h1 className="text-2xl font-bold text-gray-900 font-display">FarmForce Later</h1>
               <p className="text-gray-600 mt-2">Enter password to continue</p>
             </div>
             
@@ -343,9 +333,24 @@
       const [payrollCompleted, setPayrollCompleted] = useState(false);
       const [payrollData, setPayrollData] = useState(null);
       
+      // Global styles
+      const globalStyles = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
+      `;
+      
       // Show password gate if not authenticated
       if (!isAuthenticated) {
-        return <PasswordGate onSuccess={() => setIsAuthenticated(true)} />;
+        return (
+          <>
+            <style>{globalStyles}</style>
+            <PasswordGate onSuccess={() => setIsAuthenticated(true)} />
+          </>
+        );
       }
 
       // Navigation functions

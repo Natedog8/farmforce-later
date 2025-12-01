@@ -6,6 +6,10 @@
   <title>FarmForce Now | Agricultural Piece Rate Payroll</title>
   <meta name="description" content="The only payroll system built specifically for agriculture. Piece rate calculations, minimum wage compliance, and tax withholding - all in one place.">
   
+  <!-- Prevent search engine indexing -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -244,8 +248,83 @@
       return images[type] || images.field;
     };
 
+    // Password Protection Component
+    const PasswordGate = ({ onSuccess }) => {
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState(false);
+      const [isShaking, setIsShaking] = useState(false);
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (password === 'TeamTorvi123') {
+          sessionStorage.setItem('farmforce_auth', 'true');
+          onSuccess();
+        } else {
+          setError(true);
+          setIsShaking(true);
+          setTimeout(() => setIsShaking(false), 500);
+        }
+      };
+      
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
+          <div className={`bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md ${isShaking ? 'animate-shake' : ''}`}>
+            <style>
+              {`
+                @keyframes shake {
+                  0%, 100% { transform: translateX(0); }
+                  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                  20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+                .animate-shake { animation: shake 0.5s ease-in-out; }
+              `}
+            </style>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                <Icon name="Lock" className="w-8 h-8 text-green-600" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 font-display">FarmForce Now</h1>
+              <p className="text-gray-600 mt-2">Enter password to continue</p>
+            </div>
+            
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setError(false); }}
+                  placeholder="Enter password"
+                  className={`w-full px-4 py-3 border-2 rounded-lg text-center text-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${
+                    error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                  }`}
+                  autoFocus
+                />
+                {error && (
+                  <p className="text-red-500 text-sm mt-2 text-center">Incorrect password. Please try again.</p>
+                )}
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Access Application
+              </button>
+            </form>
+            
+            <p className="text-xs text-gray-400 text-center mt-6">
+              This is a private application. Unauthorized access is prohibited.
+            </p>
+          </div>
+        </div>
+      );
+    };
+
     // Main App Component
     const FarmForceLater = () => {
+      const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return sessionStorage.getItem('farmforce_auth') === 'true';
+      });
       const [currentPage, setCurrentPage] = useState(1);
       const [employees, setEmployees] = useState([]);
       const [currentEmployee, setCurrentEmployee] = useState({
@@ -263,6 +342,11 @@
       const [workEntries, setWorkEntries] = useState([]);
       const [payrollCompleted, setPayrollCompleted] = useState(false);
       const [payrollData, setPayrollData] = useState(null);
+      
+      // Show password gate if not authenticated
+      if (!isAuthenticated) {
+        return <PasswordGate onSuccess={() => setIsAuthenticated(true)} />;
+      }
 
       // Navigation functions
       const goToNextPage = () => {
